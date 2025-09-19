@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soro Caseiro - Receita Científica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Partículas animadas no background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Header fixo */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1rem 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .theme-toggle {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 2rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #10b981, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        /* Cards com glassmorphism */
+        .card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Calculadora */
+        .calculator {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #10b981, #00ff88);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Pessoa campo */
+        .pessoa-campo {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .pessoa-campo:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .pessoa-titulo {
+            font-weight: 600;
+            color: #00ff88;
+        }
+
+        /* Resultado */
+        .result {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .result h3 {
+            color: #10b981;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .result-section {
+            margin-bottom: 2rem;
+        }
+
+        .result-section h4 {
+            color: #00ff88;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding: 0.5rem;
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: 8px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .pessoa-result {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .pessoa-result h5 {
+            color: #10b981;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Seção de dicas */
+        .tips-section h2 {
+            color: #10b981;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .tip-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .tip-card h3 {
+            color: #00ff88;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .tip-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tip-card li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .tip-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        /* Warning box */
+        .warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .warning h3 {
+            color: #ef4444;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .warning h3::before {
+            content: "⚠️";
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 100px 1rem 1rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        /* Theme claro */
+        body.light-theme {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
+            color: #334155;
+        }
+
+        body.light-theme .card {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        body.light-theme header {
+            background: rgba(248, 250, 252, 0.8);
+        }
+
+        body.light-theme input, body.light-theme select {
+            background: rgba(248, 250, 252, 0.8);
+            color: #334155;
+        }
+
+        body.light-theme .particle {
+            background: #0f766e;
+        }
+
+        body.light-theme .pessoa-campo {
+            background: rgba(16, 185, 129, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas animadas -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header fixo -->
+    <header id="header">
+        <div class="header-content">
+            <a href="#" class="logo">💧 Soro Caseiro</a>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Tema</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Calculadora de Soro Caseiro</h1>
+            <p>Prepare soro de reidratação oral seguro e eficaz com as proporções cientificamente corretas recomendadas pela OMS</p>
+        </section>
+
+        <!-- Calculadora -->
+        <div class="grid">
+            <div class="card calculator">
+                <h2 style="color: #10b981; margin-bottom: 1.5rem; text-align: center;">🧪 Calculadora Inteligente</h2>
+                
+                <div class="form-group">
+                    <label for="pessoas">Número de pessoas:</label>
+                    <select id="pessoas" onchange="mostrarCamposPessoas()">
+                        <option value="1">1 pessoa</option>
+                        <option value="2">2 pessoas</option>
+                        <option value="3">3 pessoas</option>
+                        <option value="4">4 pessoas</option>
+                        <option value="5">5 pessoas</option>
+                        <option value="6">6 pessoas</option>
+                        <option value="8">8 pessoas</option>
+                        <option value="10">10 pessoas</option>
+                    </select>
+                </div>
+
+                <!-- Campos dinâmicos para cada pessoa -->
+                <div id="campos-pessoas">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
+
+                <button onclick="calcularSoro()">✨ Calcular Receita</button>
+
+                <div id="resultado" class="result">
+                    <h3>📋 Sua Receita Personalizada</h3>
+                    
+                    <!-- Total Geral -->
+                    <div class="result-section">
+                        <h4>🎯 Total Geral</h4>
+                        <div class="result-item">
+                            <span>💧 Água filtrada:</span>
+                            <strong id="agua-total">-</strong>
+                        </div>
+                        <div class="result-item">
+                            <span>🧂 Sal (cloreto de sódio):</span>
+                            <strong id="sal-total">-</strong>
+                        </div>
+                        <div class="result-item">
+                            <span>🍯 Açúcar (sacarose):</span>
+                            <strong id="acucar-total">-</strong>
+                        </div>
+                        <div class="result-item">
+                            <span>👥 Rendimento total:</span>
+                            <strong id="rendimento-total">-</strong>
+                        </div>
+                    </div>
+
+                    <!-- Distribuição Individual -->
+                    <div class="result-section">
+                        <h4>👤 Distribuição Individual</h4>
+                        <div id="resultados-individuais">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aviso importante -->
+        <div class="warning">
+            <h3>Importante - Segurança</h3>
+            <p><strong>Use sempre água filtrada ou fervida</strong> (deixe esfriar antes de usar). Consuma em até 24 horas e mantenha refrigerado. Em caso de desidratação severa, procure atendimento médico imediatamente.</p>
+        </div>
+
+        <!-- Seção de dicas -->
+        <section class="tips-section">
+            <h2>💡 Dicas para Saborizar Sem Perder a Eficácia</h2>
+            <div class="grid">
+                <div class="tip-card">
+                    <h3>🍋 Sabores Naturais</h3>
+                    <ul>
+                        <li>Algumas gotas de limão (rico em vitamina C)</li>
+                        <li>Suco natural de laranja (1-2 colheres)</li>
+                        <li>Água de coco pura (misture 50/50)</li>
+                        <li>Folhas de hortelã (apenas o aroma)</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-card">
+                    <h3>🧊 Temperatura e Consumo</h3>
+                    <ul>
+                        <li>Sirva gelado para melhor aceitação</li>
+                        <li>Use cubos de gelo feitos com água filtrada</li>
+                        <li>Consuma aos pequenos goles</li>
+                        <li>Ideal: 200-250ml a cada 20 minutos</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-card">
+                    <h3>⚗️ Ciência por Trás</h3>
+                    <ul>
+                        <li>Proporção sal:açúcar 1:4 (padrão OMS)</li>
+                        <li>Concentração isotônica para absorção rápida</li>
+                        <li>Sódio facilita absorção intestinal</li>
+                        <li>Glicose potencializa hidratação celular</li>
+                    </ul>
+                </div>
+                
+                <div class="tip-card">
+                    <h3>🚫 O que NÃO Adicionar</h3>
+                    <ul>
+                        <li>Adoçantes artificiais</li>
+                        <li>Refrigerantes ou energéticos</li>
+                        <li>Mel para crianças menores de 1 ano</li>
+                        <li>Excesso de qualquer ingrediente</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Configurações de necessidades hídricas por faixa etária (ml/kg/dia)
+        const necessidadesHidricas = {
+            bebe: 150,      // 6m-2 anos
+            crianca: 100,   // 2-12 anos
+            adolescente: 75, // 12-18 anos
+            adulto: 50,     // 18-65 anos
+            idoso: 45       // 65+ anos
+        };
+
+        // Multiplicadores por intensidade de desidratação
+        const multiplicadoresIntensidade = {
+            leve: 0.3,      // 30% do volume diário
+            moderada: 0.5,  // 50% do volume diário
+            severa: 0.8     // 80% do volume diário
+        };
+
+        // Criar partículas animadas
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Mostrar campos para cada pessoa
+        function mostrarCamposPessoas() {
+            const numPessoas = parseInt(document.getElementById('pessoas').value);
+            const container = document.getElementById('campos-pessoas');
+            
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= numPessoas; i++) {
+                const pessoaCampo = document.createElement('div');
+                pessoaCampo.className = 'pessoa-campo';
+                pessoaCampo.setAttribute('data-pessoa', i);
+                
+                pessoaCampo.innerHTML = `
+                    <h4 style="color: #00ff88; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                        👤 <span class="pessoa-titulo">Pessoa ${i}</span>
+                    </h4>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="peso-${i}">Peso (kg):</label>
+                            <input type="number" id="peso-${i}" min="5" max="150" value="70" onchange="calcularSoro()" placeholder="Ex: 70">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="idade-${i}">Faixa etária:</label>
+                            <select id="idade-${i}" onchange="calcularSoro()">
+                                <option value="bebe">Bebê (6m-2 anos)</option>
+                                <option value="crianca">Criança (2-12 anos)</option>
+                                <option value="adolescente">Adolescente (12-18 anos)</option>
+                                <option value="adulto" selected>Adulto (18-65 anos)</option>
+                                <option value="idoso">Idoso (65+ anos)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="intensidade-${i}">Nível de desidratação:</label>
+                        <select id="intensidade-${i}" onchange="calcularSoro()">
+                            <option value="leve" selected>Leve (prevenção/manutenção)</option>
+                            <option value="moderada">Moderada (sede, boca seca)</option>
+                            <option value="severa">Severa (muito desidratado)</option>
+                        </select>
+                    </div>
+                `;
+                
+                container.appendChild(pessoaCampo);
+            }
+            
+            // Recalcular após criar os campos
+            setTimeout(calcularSoro, 100);
+        }
+
+        // Função para calcular soro personalizado
+        function calcularSoro() {
+            const numPessoas = parseInt(document.getElementById('pessoas').value);
+            let volumeTotal = 0;
+            const resultadosIndividuais = [];
+            
+            // Calcular para cada pessoa
+            for (let i = 1; i <= numPessoas; i++) {
+                const pesoEl = document.getElementById(`peso-${i}`);
+                const idadeEl = document.getElementById(`idade-${i}`);
+                const intensidadeEl = document.getElementById(`intensidade-${i}`);
+                
+                if (!pesoEl || !idadeEl || !intensidadeEl) continue;
+                
+                const peso = parseFloat(pesoEl.value) || 70;
+                const faixaEtaria = idadeEl.value;
+                const intensidade = intensidadeEl.value;
+                
+                // Calcular volume necessário para esta pessoa
+                const necessidadeDiaria = necessidadesHidricas[faixaEtaria] * peso;
+                const volumePessoa = Math.round(necessidadeDiaria * multiplicadoresIntensidade[intensidade]);
+                
+                // Calcular número de doses (200ml por dose)
+                const numDoses = Math.ceil(volumePessoa / 200);
+                
+                // Armazenar resultado individual
+                resultadosIndividuais.push({
+                    pessoa: i,
+                    peso: peso,
+                    faixaEtaria: faixaEtaria,
+                    intensidade: intensidade,
+                    volume: volumePessoa,
+                    doses: numDoses
+                });
+                
+                volumeTotal += volumePessoa;
+            }
+            
+            // Cálculo baseado na fórmula OMS (por litro)
+            const salGramasTotal = (volumeTotal / 1000) * 2.6; // 2.6g por litro
+            const acucarGramasTotal = (volumeTotal / 1000) * 13.5; // 13.5g por litro
+            
+            // Conversões para medidas caseiras
+            const salColheresCha = Math.round((salGramasTotal / 2) * 10) / 10; // 1 colher de chá ≈ 2g
+            const acucarColheresSopa = Math.round((acucarGramasTotal / 12) * 10) / 10; // 1 colher de sopa ≈ 12g
+            
+            // Exibir resultados totais
+            document.getElementById('agua-total').textContent = `${volumeTotal.toLocaleString('pt-BR')}ml`;
+            document.getElementById('sal-total').textContent = `${salGramasTotal.toFixed(1)}g (${salColheresCha} colher${salColheresCha !== 1 ? 'es' : ''} de chá)`;
+            document.getElementById('acucar-total').textContent = `${acucarGramasTotal.toFixed(1)}g (${acucarColheresSopa} colher${acucarColheresSopa !== 1 ? 'es' : ''} de sopa)`;
+            document.getElementById('rendimento-total').textContent = `${numPessoas} pessoa${numPessoas > 1 ? 's' : ''} (${volumeTotal.toLocaleString('pt-BR')}ml)`;
+            
+            // Exibir resultados individuais
+            const containerIndividuais = document.getElementById('resultados-individuais');
+            containerIndividuais.innerHTML = '';
+            
+            resultadosIndividuais.forEach(resultado => {
+                const salIndividual = (resultado.volume / 1000) * 2.6;
+                const acucarIndividual = (resultado.volume / 1000) * 13.5;
+                
+                const pessoaDiv = document.createElement('div');
+                pessoaDiv.className = 'pessoa-result';
+                
+                const faixaEtariaLabel = {
+                    'bebe': 'Bebê (6m-2a)',
+                    'crianca': 'Criança (2-12a)',
+                    'adolescente': 'Adolescente (12-18a)',
+                    'adulto': 'Adulto (18-65a)',
+                    'idoso': 'Idoso (65+a)'
+                };
+                
+                const intensidadeLabel = {
+                    'leve': 'Leve',
+                    'moderada': 'Moderada',
+                    'severa': 'Severa'
+                };
+                
+                pessoaDiv.innerHTML = `
+                    <h5>👤 Pessoa ${resultado.pessoa} - ${resultado.peso}kg, ${faixaEtariaLabel[resultado.faixaEtaria]}, ${intensidadeLabel[resultado.intensidade]}</h5>
+                    <div class="result-item">
+                        <span>💧 Volume necessário:</span>
+                        <strong>${resultado.volume.toLocaleString('pt-BR')}ml</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>🥄 Sal para esta pessoa:</span>
+                        <strong>${salIndividual.toFixed(1)}g</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>🍯 Açúcar para esta pessoa:</span>
+                        <strong>${acucarIndividual.toFixed(1)}g</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>📅 Doses por dia:</span>
+                        <strong>${resultado.doses} doses de 200ml</strong>
+                    </div>
+                `;
+                
+                containerIndividuais.appendChild(pessoaDiv);
+            });
+            
+            // Mostrar resultado
+            document.getElementById('resultado').style.display = 'block';
+        }
+
+        // Toggle de tema
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const button = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('light-theme')) {
+                button.innerHTML = '☀️ Tema';
+            } else {
+                button.innerHTML = '🌙 Tema';
+            }
+        }
+
+        // Header scroll behavior
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            mostrarCamposPessoas(); // Inicializar com 1 pessoa
+        });
+    </script>
+</body>
+</html
